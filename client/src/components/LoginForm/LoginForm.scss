@@ -1,0 +1,64 @@
+.loginform {
+  &__wrapper {
+    width: 100%;
+    height: 100vh;
+  }
+  &__exitblock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100vh;
+  }
+  &__formContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 470px;
+    height: 550px;
+    border-radius: 15px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    h1 {
+      margin-bottom: 10px;
+    }
+  }
+  &__formContainer-dark {
+    background-color: #212529;
+    color: #9b9d9e;
+  }
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    input {
+      margin-bottom: 20px;
+    }
+  }
+  &__formGroup {
+    margin-top: 10px;
+  }
+  &__buttonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+      margin: 5px;
+      width: 250px;
+      height: 50px;
+    }
+  }
+  &__loginWithButton {
+    margin: 5px;
+    width: 250px;
+  }
+}

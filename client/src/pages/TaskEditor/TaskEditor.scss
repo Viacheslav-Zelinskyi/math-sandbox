@@ -1,0 +1,68 @@
+.taskeditor {
+  &__wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    text-align: center;
+    padding-top: 20px;
+    background-color: rgb(236, 243, 245);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+    &-dark {
+      background-color: #2e2e2e;
+      color: white;
+    }
+  }
+  &__container {
+    background-color: white;
+    height: 100%;
+    min-height: 100vh;
+    padding-top: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &-dark {
+      background-color: #1d1d1d;
+    }
+  }
+  @media screen and (min-width: 820px) {
+    &__container {
+      width: 60%;
+      min-width: 820px;
+    }
+  }
+  @media screen and (max-width: 820px) {
+    &__container {
+      width: 100%;
+      min-width: none;
+    }
+  }
+  &__form {
+    text-align: left;
+    width: 70%;
+    min-width: 350px;
+  }
+  &__formHeader {
+    margin-bottom: 40px;
+    p {
+      font-size: 16px;
+      color: #9b9d9e;
+    }
+  }
+  &__createBtn {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  @media screen and (min-width: 600px) {
+    &__createBtn {
+      width: 20%;
+    }
+  }
+  @media screen and (max-width: 600px) {
+    &__createBtn {
+      width: 100%;
+    }
+  }
+}

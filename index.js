@@ -1,9 +1,10 @@
 const express = require("express");
+require("dotenv").config();
 const http = require("http");
 const path = require("path");
 const ws = require("ws");
+const db = require("./db");
 
-require("dotenv").config();
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -16,4 +17,9 @@ app.use("/", express.static(path.join(__dirname, "client/build")));
 
 app.get(["/", "/mainpage", "/userpage", "/taskpage"], (req, res) => {
   res.sendFile("index.html", { root: path.join(__dirname, "client/build") });
+});
+
+app.get("/dbtest", (req, res) => {
+  
+  res.send("Test");
 });

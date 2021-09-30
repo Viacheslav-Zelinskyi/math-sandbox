@@ -1,0 +1,122 @@
+.task {
+  &__wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    text-align: center;
+    padding-top: 20px;
+    background-color: rgb(236, 243, 245);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+    &-dark {
+      background-color: #2e2e2e;
+      color: white;
+    }
+  }
+  &__container {
+    background-color: white;
+    height: 100%;
+    min-height: 100vh;
+    padding-top: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &-dark {
+      background-color: #1d1d1d;
+    }
+  }
+  @media screen and (min-width: 820px) {
+    &__container {
+      width: 60%;
+      min-width: 820px;
+    }
+  }
+  @media screen and (max-width: 820px) {
+    &__container {
+      width: 100%;
+      min-width: none;
+    }
+  }
+  &__theme {
+    color: #9b9d9e;
+  }
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &__tag {
+    margin: 5px;
+  }
+  &__description {
+    padding: 20px;
+    text-align: left;
+  }
+  &__images {
+    margin-bottom: 50px;
+  }
+  &__image {
+    margin: 10px;
+    cursor: pointer;
+  }
+  &__answer {
+      width: 70%;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      margin-top: 50px;
+      margin-bottom: 50px;
+
+      button {
+          margin-top: 20px;
+      }
+  }
+  &__comments {
+    text-align: left;
+    width: 80%;
+  }
+  &__addcomment {
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    textarea {
+      resize: none;
+    }
+  }
+}
+
+.comments {
+  &__wrapper {
+    margin-bottom: 30px;
+  }
+  &__commentBlock {
+    padding: 15px;
+    background-color: rgb(236, 243, 245);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    &-dark {
+      background-color: #2e2e2e;
+    }
+  }
+  &__commentAuthor {
+    margin: 0;
+  }
+  &__commentText {
+    margin-top: 10px;
+    margin-bottom: 0px;
+  }
+  &__likesBlock {
+    display: flex;
+  }
+  &__likeCounter {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-right: 15px;
+
+    svg {
+      cursor: pointer;
+    }
+  }
+}

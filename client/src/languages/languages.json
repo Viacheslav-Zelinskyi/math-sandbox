@@ -1,0 +1,126 @@
+{
+  "ru": {
+    "navbar": {
+      "home": "Главная",
+      "account": "Аккаунт",
+      "login": "Войти",
+      "mypage": "Моя страница",
+      "logout": "Выйти",
+      "searchPlaceholder": "Поиск",
+      "language": "Язык",
+      "russian": "Русский",
+      "english": "English",
+      "theme": "Тема",
+      "light": "Светлая",
+      "dark": "Тёмная",
+      "tasks": "Задачи"
+    },
+    "loginform": {
+      "login": "Войти",
+      "username": "Имя пользователя",
+      "usernamePlaceholder": "Введите имя пользователя",
+      "password": "Пароль",
+      "passwordPlaceholder": "Введите пароль",
+      "or": "или",
+      "signup": "Зарегистрироваться",
+      "signinwith": "Войти с помощью "
+    },
+    "mainpage": {
+      "new": "Новое на сайте",
+      "popular": "Популярное",
+      "more": "Больше"
+    },
+    "mypage": {
+      "completed": "Решенных задач",
+      "mytasks": "Моих задач",
+      "mytask": "Мои задачи",
+      "newtask": "Новая задача",
+      "edit": "Изм.",
+      "del": "Удл.",
+      "taskid": "Номер задачи",
+      "task": "Задача"
+    },
+    "newtask": {
+      "title": "Добавить новую или изменить существующую задачу",
+      "titleparagraph": "Пожалуйста заполните все поля",
+      "entertaskname": "Пожалуйста введите название задачи",
+      "tasknameplaceholder": "Название задачи",
+      "selecttheme": "Пожалуйста выберите тему",
+      "entertaskcondition": "Пожалуйста напишите условие задачи",
+      "taskconditionplaceholder": "Условие задачи",
+      "addtags": "Добавьте тэги",
+      "create": "Создать",
+      "edit": "Изменить"
+    },
+    "task": {
+      "task": "Задача"
+    },
+    "tasks": {
+      "result": "Результат поиска",
+      "searchplaceholder": "Введите тэг или описание задачи для поиска",
+      "all": "Все"
+    }
+  },
+  "en": {
+    "navbar": {
+      "home": "Home",
+      "account": "Account",
+      "login": "Log In",
+      "mypage": "My page",
+      "logout": "Log out",
+      "searchPlaceholder": "Search",
+      "language": "Language",
+      "russian": "Русский",
+      "english": "English",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "tasks": "Tasks"
+    },
+    "loginform": {
+      "login": "Log In",
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "or": "or",
+      "signup": "Sign Up",
+      "signinwith": "Sign in with "
+    },
+    "mainpage": {
+      "new": "New on page",
+      "popular": "Popular",
+      "more": "More"
+    },
+    "mypage": {
+      "completed": "Completed tasks",
+      "mytasks": "My Tasks",
+      "mytask": "My Tasks",
+      "newtask": "New task",
+      "edit": "Edit",
+      "del": "Del",
+      "taskid": "Task ID",
+      "task": "Task"
+    },
+    "newtask": {
+      "title": "Add new or edit exist task",
+      "titleparagraph": "Please fill all area",
+      "entertaskname": "Please enter task name",
+      "tasknameplaceholder": "Task name",
+      "selecttheme": "Please select theme",
+      "entertaskcondition": "Please enter task condition",
+      "taskconditionplaceholder": "Task condition",
+      "addtags": "Please add tags",
+      "create": "Create",
+      "edit": "Edit"
+    },
+    "task": {
+      "task": "Task"
+    },
+    "tasks": {
+      "result": "Search result",
+      "searchplaceholder": "Enter tags or description for search",
+      "all": "All"
+    }
+  }
+}
