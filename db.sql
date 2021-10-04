@@ -3,14 +3,15 @@ CREATE TABLE users (
   user_name char(50) NOT NULL,
   user_password TEXT,
   is_admin BOOLEAN,
-  is_blocked BOOLEAN
+  is_blocked BOOLEAN,
+  user_social_id TEXT
 );
 
 CREATE TABLE tasks (
   task_id SERIAL PRIMARY KEY NOT NULL,
   user_id int NOT NULL,
   task_name char(50) NOT NULL,
-  task_title char(50) NOT NULL,
+  task_theme char(50) NOT NULL,
   task_condition TEXT NOT NULL,
   task_tags TEXT NOT NULL,
   task_images TEXT NOT NULL,
@@ -31,9 +32,14 @@ CREATE TABLE comments_likes (
   is_positive BOOLEAN
 );
 
-CREATE TABLE tasks_response (
+CREATE TABLE tasks_responses (
   response_id SERIAL PRIMARY KEY NOT NULL,
   user_id int NOT NULL,
   task_id int NOT NULL,
   response_ranking int NOT NULL
+);
+
+CREATE TABLE tasks_views (
+  view_id SERIAL PRIMARY KEY NOT NULL,
+  task_id int NOT NULL
 );

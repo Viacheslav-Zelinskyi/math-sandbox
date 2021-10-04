@@ -1,9 +1,12 @@
 const express = require("express");
 require("dotenv").config();
+const routes = require("./routes");
 const http = require("http");
 const path = require("path");
 const ws = require("ws");
-const db = require("./db");
+
+const bodyParser = require("body-parser");
+const jsonParser = bodyParser.json();
 
 const port = process.env.PORT || 5000;
 
@@ -19,7 +22,4 @@ app.get(["/", "/mainpage", "/userpage", "/taskpage"], (req, res) => {
   res.sendFile("index.html", { root: path.join(__dirname, "client/build") });
 });
 
-app.get("/dbtest", (req, res) => {
-  
-  res.send("Test");
-});
+app.use("/api", jsonParser, routes);
