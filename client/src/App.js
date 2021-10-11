@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { MainPage, MyPage, TaskEditor, Task, Tasks } from "./pages";
 import { Header } from "./components";
 import languages from "./languages/languages.json";
 import "./App.scss";
+import { useSelector } from "react-redux";
 
 function App() {
-  const [loggedIn, setLogIn] = useState(false);
+  const loggedIn = !!useSelector((store) => store.user.username);
   const [theme, setTheme] = useState("light"); // light || dark
   const [language, setLanguage] = useState("en"); // en || ru
 
@@ -36,7 +37,14 @@ function App() {
       />
       <Switch>
         <Route path="/mypage">
-          <MyPage theme={theme} locale={languages[language]}></MyPage>
+          {loggedIn ? (
+            <MyPage theme={theme} locale={languages[language]} />
+          ) : (
+            <Redirect to="/" />
+          )}
+        </Route>
+        <Route path="/taskeditor/:id">
+          <TaskEditor theme={theme} locale={languages[language]} />
         </Route>
         <Route path="/taskeditor">
           <TaskEditor theme={theme} locale={languages[language]} />

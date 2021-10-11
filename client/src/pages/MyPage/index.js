@@ -1,19 +1,30 @@
 import BootstrapTable from "react-bootstrap-table-next";
+import { Button } from "react-bootstrap";
+import filterFactory, { textFilter } from "react-bootstrap-table2-filter";
+import { Link, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import {
+  deleteTask,
+  getMyTasksFetch,
+  getNumberOfCompletedTask,
+} from "../../api";
 import "./MyPage.scss";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
-import { Button } from "react-bootstrap";
-import filterFactory, { textFilter } from "react-bootstrap-table2-filter";
-import { Link } from "react-router-dom";
 
 const MyPage = ({ theme, locale }) => {
-  const username = "Valeriy Leontev";
+  const user = useSelector((store) => store.user);
+  const [completedTask, setCompletedTask] = useState({ count: 0 });
+  const [myTasks, setMyTasks] = useState({ count: 0, tasks: [] });
+  const history = useHistory();
 
-  const products = [
-    { id: 5, label: "B", edit: editbar(5, locale) },
-    { id: 8, label: "C", edit: editbar(8, locale) },
-    { id: 6, label: "Av", edit: editbar(6, locale) },
-  ];
+  useEffect(() => {
+    getNumberOfCompletedTask(user.username).then((res) =>
+      setCompletedTask(res)
+    );
+    getMyTasksFetch(user.username, 0, 10).then((res) => setMyTasks(res));
+  }, [user.username, myTasks]);
 
   return (
     <div
@@ -27,10 +38,14 @@ const MyPage = ({ theme, locale }) => {
           (theme === "dark" ? " mypage__container-dark" : "")
         }
       >
-        <h2>{username}</h2>
+        <h2>{user.username}</h2>
         <div className="mypage__taskcounter">
-          <p>10 {locale.mypage.completed}</p>
-          <p>15 {locale.mypage.mytasks}</p>
+          <p>
+            {completedTask.count} {locale.mypage.completed}
+          </p>
+          <p>
+            {myTasks.count} {locale.mypage.mytasks}
+          </p>
         </div>
         <hr />
         <div className="mypage__tablelabel">
@@ -45,7 +60,17 @@ const MyPage = ({ theme, locale }) => {
           <BootstrapTable
             keyField="id"
             filter={filterFactory()}
-            data={products}
+            data={myTasks.tasks.map((item) => {
+              item.edit = editbar(
+                item.task_id,
+                locale,
+                user,
+                setMyTasks,
+                myTasks,
+                history
+              );
+              return item;
+            })}
             columns={columns(locale)}
           />
         </div>
@@ -54,14 +79,26 @@ const MyPage = ({ theme, locale }) => {
   );
 };
 
-const editbar = (id, locale) => (
+const editbar = (id, locale, user, setMyTasks, myTasks, history) => (
   <div
     style={{ display: "flex", justifyContent: "space-around", width: "100%" }}
   >
-    <Button variant="warning" onClick={() => console.log(id)}>
+    <Button variant="warning" onClick={() => history.push(`/taskeditor/${id}`)}>
       {locale.mypage.edit}
     </Button>
-    <Button variant="danger" onClick={() => console.log(id)}>
+    <Button
+      variant="danger"
+      onClick={() => {
+        deleteTask({
+          type: user.type,
+          user_name: user.username,
+          token: user.token,
+          password: user.password,
+          task_id: id,
+        });
+        setMyTasks(myTasks);
+      }}
+    >
       {locale.mypage.del}
     </Button>
   </div>
@@ -69,14 +106,14 @@ const editbar = (id, locale) => (
 
 const columns = (locale) => [
   {
-    dataField: "id",
+    dataField: "task_id",
     text: locale.mypage.taskid,
     headerStyle: { width: "20%" },
     sort: true,
     filter: textFilter(),
   },
   {
-    dataField: "label",
+    dataField: "task_name",
     text: locale.mypage.task,
     headerStyle: { width: "70%" },
     sort: true,

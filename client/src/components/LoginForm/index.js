@@ -2,8 +2,56 @@ import { Form, Button } from "react-bootstrap";
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import "./LoginForm.scss";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { logInFetch } from "../../api";
+import { logIn } from "../../redux/reducers/user";
 
 const LoginForm = ({ locale, theme, closeWindow }) => {
+  const [isRegister, setIsRegister] = useState(false);
+  const dispatch = useDispatch();
+
+  const logInStandart = (e) => {
+    e.preventDefault();
+    const username = e.target[2].value;
+    const password = e.target[3].value;
+    logInFetch({
+      type: isRegister ? "register" : "auth",
+      user_name: username,
+      password: password,
+    }).then((res) => {
+      if (res.loggedIn || res.isUserCreated) {
+        dispatch(
+          logIn({ type: "native", username: username, password: password })
+        );
+        closeWindow();
+      } else alert(res?.error);
+    });
+  };
+
+  const logInSocial = (
+    { tokenId, profileObj, name, id, accessToken },
+    type
+  ) => {
+    logInFetch({
+      type: type,
+      user_name: profileObj?.name || name,
+      user_social_id: profileObj?.googleId || id,
+      token: tokenId || accessToken,
+    }).then((res) => {
+      if (res.loggedIn) {
+        dispatch(
+          logIn({
+            type: type,
+            username: profileObj?.name || name,
+            token: tokenId || accessToken,
+          })
+        );
+        closeWindow();
+      } else console.log(res?.error);
+    });
+  };
+
   return (
     <div className="loginform__wrapper">
       <div className="loginform__exitblock" onClick={() => closeWindow()} />
@@ -14,10 +62,10 @@ const LoginForm = ({ locale, theme, closeWindow }) => {
         }
       >
         <h1>{locale.loginform.login}</h1>
-        <Form className="loginform__form">
+        <Form className="loginform__form" onSubmit={logInStandart}>
           <GoogleLogin
             clientId="156449094191-fhtrksghovt2bg56l07fp9gqtjh599du.apps.googleusercontent.com"
-            onSuccess={(response) => console.log(response)}
+            onSuccess={(response) => logInSocial(response, "google")}
             render={(renderProps) => (
               <Button
                 variant={theme === "light" ? "success" : "secondary"}
@@ -31,7 +79,7 @@ const LoginForm = ({ locale, theme, closeWindow }) => {
           />
           <FacebookLogin
             appId="855345331816971"
-            callback={(res) => console.log(res)}
+            callback={(response) => logInSocial(response, "facebook")}
             render={(renderProps) => (
               <Button
                 onClick={renderProps.onClick}
@@ -57,11 +105,16 @@ const LoginForm = ({ locale, theme, closeWindow }) => {
             <Button
               variant={theme === "light" ? "primary" : "light"}
               type="submit"
+              onClick={() => setIsRegister(false)}
             >
               {locale.loginform.login}
             </Button>
             {locale.loginform.or}
-            <Button variant={theme === "light" ? "primary" : "light"}>
+            <Button
+              variant={theme === "light" ? "primary" : "light"}
+              type="submit"
+              onClick={() => setIsRegister(true)}
+            >
               {locale.loginform.signup}
             </Button>
           </div>

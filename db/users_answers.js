@@ -1,11 +1,11 @@
 const Sequelize = require("sequelize");
 
 module.exports = function (sequelize) {
-  const Comments = sequelize.define(
-    "comments",
+  return sequelize.define(
+    "users_answers",
     {
-      comment_id: {
-        type: Sequelize.UUID,
+      answer_id: {
+        type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
@@ -18,17 +18,13 @@ module.exports = function (sequelize) {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      comment: {
+      answer: {
         type: Sequelize.STRING,
         allowNull: false,
       },
     },
     {
       timestamps: false,
-      freezeTableName: true,
-      underscored: true
     }
   );
-
-  return Comments;
 };

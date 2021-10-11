@@ -6,12 +6,15 @@ import {
   NavDropdown,
   FormControl,
 } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { logOut } from "../../redux/reducers/user";
 import { LoginForm } from "../index";
 import "./Header.scss";
 
 const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
   const [isOpenedLogin, setIsOpenedLogin] = useState(false);
+  const dispatch = useDispatch();
   const history = useHistory();
   return (
     <div className="header">
@@ -37,7 +40,7 @@ const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
                     <NavDropdown.Item onClick={() => history.push("/mypage")}>
                       {locale.navbar.mypage}
                     </NavDropdown.Item>
-                    <NavDropdown.Item>{locale.navbar.logout}</NavDropdown.Item>
+                    <NavDropdown.Item onClick={()=>dispatch(logOut())}>{locale.navbar.logout}</NavDropdown.Item>
                   </>
                 )}
               </NavDropdown>

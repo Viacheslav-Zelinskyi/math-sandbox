@@ -16,6 +16,7 @@
     }
   }
   &__container {
+    text-align: center;
     background-color: white;
     height: 100%;
     min-height: 100vh;
@@ -50,8 +51,14 @@
     margin: 5px;
   }
   &__description {
+    text-align: center;
     padding: 20px;
+    width: 80%;
     text-align: left;
+
+    img {
+      width: 80%;
+    }
   }
   &__images {
     margin-bottom: 50px;

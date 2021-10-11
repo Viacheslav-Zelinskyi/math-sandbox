@@ -16,7 +16,7 @@ class AuthController {
           req.body.password,
           req.user.user_password
         );
-        res.send(checkPassword ? { loggedin: true } : { loggedin: false });
+        res.send(checkPassword ? { loggedIn: true } : { loggedIn: false });
         break;
       case "register":
         if (req.user?.hasOwnProperty("user_id")) {
@@ -25,7 +25,7 @@ class AuthController {
         }
         const passwordHash = await AuthService.hashPassword(req.body.password);
         AuthService.createUser(req.body.user_name, passwordHash);
-        res.send({ status: "User created" });
+        res.send({ isUserCreated: true });
         break;
       case "facebook":
         const tokenCheck = await AuthService.facebookAuth(req.body.token);
@@ -34,11 +34,11 @@ class AuthController {
           break;
         }
         if (req.user?.user_social_id === tokenCheck.id) {
-          res.send({ loggedin: true });
+          res.send({ loggedIn: true });
           break;
         }
         AuthService.createUser(tokenCheck.name, null, tokenCheck.id);
-        res.send({ loggedin: true });
+        res.send({ loggedIn: true });
         break;
       case "google":
         const ticket = await AuthService.googleAuth(req.body.token);
@@ -47,11 +47,11 @@ class AuthController {
           break;
         }
         if (req.user?.user_social_id === ticket.id) {
-          res.send({ loggedin: true });
+          res.send({ loggedIn: true });
           break;
         }
         AuthService.createUser(ticket.name, null, ticket.id);
-        res.send({ loggedin: true });
+        res.send({ loggedIn: true });
         break;
     }
   }

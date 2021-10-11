@@ -49,8 +49,10 @@
       "entertaskcondition": "Пожалуйста напишите условие задачи",
       "taskconditionplaceholder": "Условие задачи",
       "addtags": "Добавьте тэги",
+      "selectimage": "Добавьте изображения",
       "create": "Создать",
-      "edit": "Изменить"
+      "edit": "Изменить",
+      "answer": "Ответ"
     },
     "task": {
       "task": "Задача"
@@ -111,8 +113,10 @@
       "entertaskcondition": "Please enter task condition",
       "taskconditionplaceholder": "Task condition",
       "addtags": "Please add tags",
+      "selectimage": "Select images",
       "create": "Create",
-      "edit": "Edit"
+      "edit": "Edit",
+      "answer": "Answer"
     },
     "task": {
       "task": "Task"

@@ -7,6 +7,13 @@ CREATE TABLE users (
   user_social_id TEXT
 );
 
+CREATE TABLE users_answers (
+  answer_id SERIAL PRIMARY KEY NOT NULL,
+  user_id int NOT NULL,
+  task_id int NOT NULL,
+  answer TEXT
+);
+
 CREATE TABLE tasks (
   task_id SERIAL PRIMARY KEY NOT NULL,
   user_id int NOT NULL,
@@ -14,7 +21,7 @@ CREATE TABLE tasks (
   task_theme char(50) NOT NULL,
   task_condition TEXT NOT NULL,
   task_tags TEXT NOT NULL,
-  task_images TEXT NOT NULL,
+  task_images TEXT,
   task_answer TEXT NOT NULL
 );
 

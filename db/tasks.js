@@ -32,7 +32,7 @@ module.exports = function (sequelize) {
       },
       task_images: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       task_answer: {
         type: Sequelize.STRING,

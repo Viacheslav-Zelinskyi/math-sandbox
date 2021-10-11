@@ -1,11 +1,11 @@
 const Sequelize = require("sequelize");
 
 module.exports = function (sequelize) {
-  return sequelize.define(
+  const Users = sequelize.define(
     "users",
     {
       user_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
@@ -31,6 +31,8 @@ module.exports = function (sequelize) {
         allowNull: true,
       },
     },
-    { timestamps: false }
+    { timestamps: false, freezeTableName: true, underscored: true }
   );
+
+  return Users;
 };

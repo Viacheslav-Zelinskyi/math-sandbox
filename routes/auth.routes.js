@@ -6,7 +6,7 @@ const express = require("express"),
 router.use(async (req, res, next) => {
   let users = {};
   if (req.body.token) {
-    users = await AuthService.getUserBySocialId(req.body.id);
+    users = await AuthService.getUserBySocialId(req.body.user_social_id);
   } else {
     users = await AuthService.getUserByUsername(req.body.user_name);
   }

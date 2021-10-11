@@ -1,16 +1,30 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge, Button, Form } from "react-bootstrap";
 import { HandThumbsDown, HandThumbsUp } from "react-bootstrap-icons";
 import ReactMarkdown from "react-markdown";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ImageViewer from "react-simple-image-viewer";
 import StarRatings from "react-star-ratings";
+import { addCommentFetch, getTaskByIdFetch } from "../../api";
 import "./Task.scss";
 
 const Task = ({ theme, locale }) => {
+  const [task, setTask] = useState({
+    task_name: "",
+    task_tags: "",
+    task_images: "",
+    comments: [],
+  });
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [rating, setRating] = useState(3.35);
+  const user = useSelector((store) => store.user);
+  let { id } = useParams();
+
+  useEffect(() => {
+    getTaskByIdFetch(id).then((res) => setTask(res));
+  }, [id, task]);
 
   const openImageViewer = useCallback((index) => {
     setCurrentImage(index);
@@ -22,27 +36,38 @@ const Task = ({ theme, locale }) => {
     setIsViewerOpen(false);
   };
 
-  const { id } = useParams();
+  const addComment = (comment) => {
+    const commentData = {
+      type: user.type,
+      user_name: user.username,
+      token: user.token,
+      password: user.password,
+      task_id: id,
+      comment: comment,
+    };
+    setTask(task);
+    addCommentFetch(commentData);
+  };
 
   return (
     <div className={"task__wrapper task__wrapper-" + theme}>
       <div className={"task__container task__container-" + theme}>
         <h3>
-          {locale.task.task} №{id}. {task.title}
+          {locale.task.task} №{id}. {task.task_name}
         </h3>
-        <p className="task__theme">{task.theme}</p>
+        <p className="task__theme">{task.task_theme}</p>
         <div className="task__tags">
-          {task.tags.map((tag) => (
+          {task.task_tags.split(",").map((tag) => (
             <Badge className="task__tag" bg="success">
               {tag}
             </Badge>
           ))}
         </div>
         <div className="task__description">
-          <ReactMarkdown>{task.description}</ReactMarkdown>
+          <ReactMarkdown>{task.task_condition}</ReactMarkdown>
         </div>
         <div className="task__images">
-          {task.images.map((image, index) => (
+          {task.task_images?.split(",").map((image, index) => (
             <img
               className="task__image"
               src={image}
@@ -53,7 +78,7 @@ const Task = ({ theme, locale }) => {
           ))}
           {isViewerOpen && (
             <ImageViewer
-              src={task.images}
+              src={task.task_images}
               currentIndex={currentImage}
               onClose={closeImageViewer}
               disableScroll={false}
@@ -65,13 +90,15 @@ const Task = ({ theme, locale }) => {
           )}
         </div>
         <StarRatings
-            rating={rating}
-            starRatedColor="blue"
-            changeRating={( newRating, name )=>setRating((rating+newRating)/2)}
-            numberOfStars={5}
-            name="rating"
-            starDimension="40px"
-          />
+          rating={rating}
+          starRatedColor="blue"
+          changeRating={(newRating, name) =>
+            setRating((rating + newRating) / 2)
+          }
+          numberOfStars={5}
+          name="rating"
+          starDimension="40px"
+        />
         <div className="task__answer">
           <h4>Answer:</h4>
           <Form.Control as="textarea" row="1"></Form.Control>
@@ -81,9 +108,14 @@ const Task = ({ theme, locale }) => {
           <h4>Comments</h4>
           <hr></hr>
           <div className="task__addcomment">
-            <Form.Control placeholder="Enter comment..."></Form.Control>
+            <Form.Control
+              placeholder="Enter comment..."
+              onKeyDown={(e) => {
+                if (e.code === "Enter") addComment(e.target.value);
+              }}
+            ></Form.Control>
           </div>
-          <Comments comments={comments} theme={theme} />
+          <Comments comments={task.comments} theme={theme} />
         </div>
       </div>
     </div>
@@ -95,7 +127,7 @@ const Comments = ({ comments, theme }) => (
     {comments.map((comment) => (
       <div className={"comments__commentBlock comments__commentBlock-" + theme}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p className="comments__commentAuthor">{comment.author}:</p>
+          <p className="comments__commentAuthor">{comment.user.user_name}:</p>
           <div className="comments__likesBlock">
             <div className="comments__likeCounter">
               <HandThumbsUp />
@@ -107,48 +139,10 @@ const Comments = ({ comments, theme }) => (
             </div>
           </div>
         </div>
-        <p className="comments__commentText">{comment.text}</p>
+        <p className="comments__commentText">{comment.comment}</p>
       </div>
     ))}
   </div>
 );
-
-const task = {
-  title: "Algorithm",
-  theme: "Math",
-  tags: ["math", "algorithm", "bio"],
-  description: `# A demo of "react-markdown"
-
-  "react-markdown" is a markdown component for React.
-  
-  👉 Changes are re-rendered as you type.
-  
-  👈 Try writing some markdown on the left.
-  
-  ## Overview
-  
-  * Follows [CommonMark](https://commonmark.org)
-  * Optionally follows [GitHub Flavored Markdown](https://github.github.com/gfm/)
-  * Renders actual React elements instead of using "dangerouslySetInnerHTML"
-  * Lets you define your own components (to render "MyHeading" instead of "h1")
-  * Has a lot of plugins`,
-  images: [
-    "http://placeimg.com/1200/800/nature",
-    "http://placeimg.com/1920/1080/nature",
-    "http://placeimg.com/1500/500/nature",
-  ],
-};
-
-const comments = [
-  { id: 5, author: "Kto to", text: "Nice work!!!", likes: 256, dislikes: 20 },
-  {
-    id: 6,
-    author: "Mamkin Programmer",
-    text: `SyntaxError: /home/viacheslav/WebP/Itransition/MathSandbox/client/src/pages/Task/index.js: Unexpected token, expected "," (121:2)`,
-    likes: 25,
-    dislikes: 2,
-  },
-  { id: 7, author: "Ghost", text: "Nice!!!", likes: 2560, dislikes: 0 },
-];
 
 export default Task;

@@ -1,16 +1,15 @@
-const res = require("express/lib/response");
 const db = require("../db");
 const { Sequelize: sequelize } = require("sequelize");
-const { Op } = require("sequelize");
 
 class TaskService {
-  getAllTasks(from, interval, fromEnd) {
+  getAllTasks(from, interval, fromEnd, user_id) {
     return new Promise((res, rej) => {
       db.tasks
         .findAll({
           offset: from,
           limit: interval,
           order: fromEnd ? [["task_id", "DESC"]] : null,
+          where: user_id ? { user_id: user_id } : {},
         })
         .then((result) => res(result));
     });
@@ -59,7 +58,10 @@ class TaskService {
   getComments(task_id) {
     return new Promise((res, rej) => {
       db.comments
-        .findAll({ where: { task_id: task_id } })
+        .findAll({
+          where: { task_id: task_id },
+          include: [{ model: db.users, attributes: ["user_name"] }],
+        })
         .then((result) => res(result));
     });
   }
@@ -68,6 +70,22 @@ class TaskService {
     return new Promise((res, rej) => {
       db.comments_likes
         .findAll({ where: { comment_id: comment_id } })
+        .then((result) => res(result));
+    });
+  }
+
+  countCompletedTask(user_id) {
+    return new Promise((res, rej) => {
+      db.users_answers
+        .count({ where: { user_id: user_id } })
+        .then((result) => res({ count: result }));
+    });
+  }
+
+  countWritedTask(user_id) {
+    return new Promise((res, rej) => {
+      db.tasks
+        .count({ where: { user_id: user_id } })
         .then((result) => res(result));
     });
   }
@@ -115,6 +133,19 @@ class TaskService {
     });
   }
 
+  updateTask(taskData, task_id, user_id, is_admin) {
+    return new Promise((res, rej) => {
+      console.log(task_id, user_id, is_admin)
+      db.tasks
+        .update(taskData, {
+          where: is_admin
+            ? { task_id: task_id }
+            : { task_id: task_id, user_id: user_id },
+        })
+        .then((result) => res(result));
+    });
+  }
+
   updateCommentLike(user_id, comment_id, is_positive) {
     return new Promise((res, rej) => {
       db.comments_likes
@@ -136,6 +167,18 @@ class TaskService {
         )
         .then(() => res({ status: "Response updated" }))
         .catch(() => res({ error: "Response don't updated" }));
+    });
+  }
+
+  deleteTask(task_id, user_id, is_admin) {
+    return new Promise((res, rej) => {
+      db.tasks
+        .destroy({
+          where: is_admin
+            ? { task_id: task_id }
+            : { task_id: task_id, user_id: user_id },
+        })
+        .then((result) => res(result));
     });
   }
 
@@ -172,7 +215,7 @@ class TaskService {
       db.tasks
         .create(taskData)
         .then(() => res({ status: "Task Created" }))
-        .catch(() => res({ status: "Error" }));
+        .catch((err) => res({ status: err }));
     });
   }
 }

@@ -53,6 +53,83 @@ class TaskController {
     );
   }
 
+  async countCompletedTask(req, res) {
+    const result = await TaskService.countCompletedTask(req.user.user_id);
+    res.send(result);
+  }
+
+  async getWritedTask(req, res) {
+    const count = await TaskService.countWritedTask(req.user.user_id);
+    const tasks = await TaskService.getAllTasks(
+      req.query.from,
+      req.query.interval,
+      true,
+      req.user.user_id
+    );
+    res.send({ count: count, tasks: tasks });
+  }
+
+  async deleteTask(req, res) {
+    let authData = {};
+    switch (req.body.type) {
+      case "google":
+        authData = await AuthService.googleAuth(req.body.token);
+        break;
+      case "facebook":
+        authData = await AuthService.facebookAuth(req.body.token);
+        break;
+      case "native":
+        authData = await AuthService.checkPassword(
+          req.body.password,
+          req.user.user_password
+        );
+        break;
+    }
+    if (authData.hasOwnProperty("error"))
+      return res.send({ error: "User not authorized" });
+
+    const result = await TaskService.deleteTask(
+      req.body.task_id,
+      req.user.user_id,
+      req.user.is_admin
+    );
+    res.send({ status: result });
+  }
+
+  async updateTask(req, res) {
+    let authData = {};
+    switch (req.body.type) {
+      case "google":
+        authData = await AuthService.googleAuth(req.body.token);
+        break;
+      case "facebook":
+        authData = await AuthService.facebookAuth(req.body.token);
+        break;
+      case "native":
+        authData = await AuthService.checkPassword(
+          req.body.password,
+          req.user.user_password
+        );
+        break;
+    }
+    if (authData.hasOwnProperty("error"))
+      return res.send({ error: "User not authorized" });
+    const result = await TaskService.updateTask(
+      {
+        task_name: req.body.task_name,
+        task_theme: req.body.task_theme,
+        task_condition: req.body.task_condition,
+        task_tags: req.body.task_tags,
+        task_images: req.body.task_images,
+        task_answer: req.body.task_answer,
+      },
+      req.body.task_id,
+      req.user.user_id,
+      req.user.is_admin
+    );
+    res.send({status: result});
+  }
+
   async deleteCommentLike(req, res) {
     const result = await TaskService.deleteCommentLike(
       req.body.user_id,
@@ -162,7 +239,7 @@ class TaskController {
     const result = await TaskService.addComment(
       req.body.task_id,
       req.body.comment,
-      req.body.user_id
+      req.user.user_id
     );
     res.send(result);
   }
