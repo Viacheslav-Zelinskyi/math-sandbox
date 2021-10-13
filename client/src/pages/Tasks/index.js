@@ -10,7 +10,7 @@ const Tasks = ({ theme, locale }) => {
   useEffect(() => {
     getAllTaskFetch(0, 10).then((res) => setTasks(res));
   }, []);
-
+  
   return (
     <div className={"tasks__wrapper tasks__wrapper-" + theme}>
       <div className={"tasks__container tasks__container-" + theme}>

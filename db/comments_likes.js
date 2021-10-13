@@ -18,6 +18,10 @@ module.exports = function (sequelize) {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      task_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       is_positive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

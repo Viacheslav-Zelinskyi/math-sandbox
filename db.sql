@@ -35,6 +35,7 @@ CREATE TABLE comments (
 CREATE TABLE comments_likes (
   like_id SERIAL PRIMARY KEY NOT NULL,
   user_id int NOT NULL,
+  task_id int NOT NULL,
   comment_id int NOT NULL,
   is_positive BOOLEAN
 );

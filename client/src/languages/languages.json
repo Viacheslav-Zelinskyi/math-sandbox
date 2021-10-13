@@ -55,7 +55,13 @@
       "answer": "Ответ"
     },
     "task": {
-      "task": "Задача"
+      "task": "Задача",
+      "answer": "Ответ",
+      "send": "Отправить",
+      "comments": "Комментарии",
+      "commentPlaceholder": "Введите коментарий...",
+      "correct": "Верный ответ",
+      "incorrect":  "Неверный ответ"
     },
     "tasks": {
       "result": "Результат поиска",
@@ -119,7 +125,13 @@
       "answer": "Answer"
     },
     "task": {
-      "task": "Task"
+      "task": "Task",
+      "answer": "Answer",
+      "send": "Send",
+      "comments": "Comments",
+      "commentPlaceholder": "Enter comments...",
+      "correct": "Correct answer",
+      "incorrect":  "Incorrect answer"
     },
     "tasks": {
       "result": "Search result",

@@ -26,6 +26,8 @@ router
   .get(TaskController.getTask)
   .post(TaskController.addResponse);
 
+router.route("/answer").post(TaskController.checkAnswer)
+
 router.route("/last").get(TaskController.getLastTasks);
 
 router.route("/completed").get(TaskController.countCompletedTask);
@@ -34,7 +36,10 @@ router.route("/writed").get(TaskController.getWritedTask);
 
 router.route("/popular").get(TaskController.getPopularTask);
 
-router.route("/comment").post(TaskController.addComment);
+router
+  .route("/comment")
+  .get(TaskController.getCommentsLikes)
+  .post(TaskController.addComment);
 
 router
   .route("/comment/:id")

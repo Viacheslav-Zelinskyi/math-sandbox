@@ -1,12 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
 import { Badge, Button, Form } from "react-bootstrap";
-import { HandThumbsDown, HandThumbsUp } from "react-bootstrap-icons";
+import {
+  HandThumbsDown,
+  HandThumbsDownFill,
+  HandThumbsUp,
+  HandThumbsUpFill,
+} from "react-bootstrap-icons";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ImageViewer from "react-simple-image-viewer";
 import StarRatings from "react-star-ratings";
-import { addCommentFetch, getTaskByIdFetch } from "../../api";
+import {
+  addCommentFetch,
+  addResponseFetch,
+  getTaskByIdFetch,
+  getCommentsLikes,
+  addCommentLikeFetch,
+  deleteCommentLikeFetch,
+  checkAnswerFetch,
+} from "../../api";
 import "./Task.scss";
 
 const Task = ({ theme, locale }) => {
@@ -15,16 +28,21 @@ const Task = ({ theme, locale }) => {
     task_tags: "",
     task_images: "",
     comments: [],
+    rating: 0,
   });
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-  const [rating, setRating] = useState(3.35);
+  const [rating, setRating] = useState(0);
   const user = useSelector((store) => store.user);
   let { id } = useParams();
 
   useEffect(() => {
     getTaskByIdFetch(id).then((res) => setTask(res));
-  }, [id, task]);
+  }, []);
+
+  useEffect(() => {
+    setRating(task.rating || 0);
+  }, [task]);
 
   const openImageViewer = useCallback((index) => {
     setCurrentImage(index);
@@ -36,6 +54,10 @@ const Task = ({ theme, locale }) => {
     setIsViewerOpen(false);
   };
 
+  const updateTask = () => {
+    getTaskByIdFetch(id).then((res) => setTask(res));
+  };
+
   const addComment = (comment) => {
     const commentData = {
       type: user.type,
@@ -45,8 +67,33 @@ const Task = ({ theme, locale }) => {
       task_id: id,
       comment: comment,
     };
-    setTask(task);
-    addCommentFetch(commentData);
+    addCommentFetch(commentData).then(() => updateTask());
+  };
+
+  const addResponse = (newRating) => {
+    const commentData = {
+      type: user.type,
+      user_name: user.username,
+      token: user.token,
+      password: user.password,
+      task_id: id,
+      response_ranking: newRating,
+    };
+    addResponseFetch(commentData).then(() => updateTask());
+  };
+
+  const checkAnswer = (e) => {
+    e.preventDefault();
+    checkAnswerFetch({
+      type: user.type,
+      user_name: user.username,
+      token: user.token,
+      password: user.password,
+      task_id: id,
+      answer: e.target[0].value,
+    }).then((res) =>
+      alert(res.isCorrect ? locale.task.correct : locale.task.incorrect)
+    );
   };
 
   return (
@@ -92,57 +139,134 @@ const Task = ({ theme, locale }) => {
         <StarRatings
           rating={rating}
           starRatedColor="blue"
-          changeRating={(newRating, name) =>
-            setRating((rating + newRating) / 2)
-          }
+          changeRating={addResponse}
           numberOfStars={5}
           name="rating"
           starDimension="40px"
         />
         <div className="task__answer">
-          <h4>Answer:</h4>
-          <Form.Control as="textarea" row="1"></Form.Control>
-          <Button>Send</Button>
+          <h4>{locale.task.answer}:</h4>
+          <Form onSubmit={checkAnswer}>
+            <Form.Control as="textarea" row="1"></Form.Control>
+            <Button type="submit">{locale.task.send}</Button>
+          </Form>
         </div>
         <div className="task__comments">
-          <h4>Comments</h4>
+          <h4>{locale.task.comments}</h4>
           <hr></hr>
           <div className="task__addcomment">
             <Form.Control
-              placeholder="Enter comment..."
+              placeholder={locale.task.commentPlaceholder}
               onKeyDown={(e) => {
                 if (e.code === "Enter") addComment(e.target.value);
               }}
             ></Form.Control>
           </div>
-          <Comments comments={task.comments} theme={theme} />
+          <Comments
+            comments={task.comments}
+            task_id={id}
+            theme={theme}
+            user={user}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-const Comments = ({ comments, theme }) => (
-  <div className="comments__wrapper">
-    {comments.map((comment) => (
-      <div className={"comments__commentBlock comments__commentBlock-" + theme}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p className="comments__commentAuthor">{comment.user.user_name}:</p>
-          <div className="comments__likesBlock">
-            <div className="comments__likeCounter">
-              <HandThumbsUp />
-              {comment.likes}
-            </div>
-            <div className="comments__likeCounter">
-              <HandThumbsDown />
-              {comment.dislikes}
+const Comments = ({ comments, theme, task_id, user }) => {
+  const [likes, setLikes] = useState({ likes: [], user_id: null });
+  useEffect(() => {
+    getCommentsLikes(task_id, user.username).then((result) => setLikes(result));
+  }, [task_id, user.username]);
+
+  const updateLikes = () => {
+    getCommentsLikes(task_id, user.username).then((result) => setLikes(result));
+  };
+
+  const addCommentLike = (is_positive, comment_id) => {
+    addCommentLikeFetch({
+      type: user.type,
+      user_name: user.username,
+      token: user.token,
+      password: user.password,
+      comment_id: comment_id,
+      is_positive: is_positive,
+      task_id: task_id,
+    }).then(() => updateLikes());
+  };
+
+  const deleteCommentLike = (comment_id) => {
+    deleteCommentLikeFetch({
+      type: user.type,
+      user_name: user.username,
+      token: user.token,
+      password: user.password,
+      comment_id: comment_id,
+    }).then(() => updateLikes());
+  };
+
+  return (
+    <div className="comments__wrapper">
+      {comments.map((comment) => (
+        <div
+          className={"comments__commentBlock comments__commentBlock-" + theme}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <p className="comments__commentAuthor">{comment.user.user_name}:</p>
+            <div className="comments__likesBlock">
+              <div className="comments__likeCounter">
+                {likes.likes.filter(
+                  (item) =>
+                    item.user_id === likes.user_id &&
+                    item.comment_id === comment.comment_id &&
+                    item.is_positive === true
+                ).length > 0 ? (
+                  <HandThumbsUpFill
+                    onClick={() => deleteCommentLike(comment.comment_id)}
+                  />
+                ) : (
+                  <HandThumbsUp
+                    onClick={() => addCommentLike(true, comment.comment_id)}
+                  />
+                )}
+                {
+                  likes.likes.filter(
+                    (item) =>
+                      item.comment_id === comment.comment_id && item.is_positive
+                  ).length
+                }
+              </div>
+              <div className="comments__likeCounter">
+                {likes.likes.filter(
+                  (item) =>
+                    item.user_id === likes.user_id &&
+                    item.comment_id === comment.comment_id &&
+                    item.is_positive === false
+                ).length > 0 ? (
+                  <HandThumbsDownFill
+                    onClick={() => deleteCommentLike(comment.comment_id)}
+                  />
+                ) : (
+                  <HandThumbsDown
+                    onClick={() => addCommentLike(false, comment.comment_id)}
+                  />
+                )}
+                {
+                  likes.likes.filter(
+                    (item) =>
+                      item.comment_id === comment.comment_id &&
+                      !item.is_positive
+                  ).length
+                }
+              </div>
             </div>
           </div>
+          <p className="comments__commentText">{comment.comment}</p>
         </div>
-        <p className="comments__commentText">{comment.comment}</p>
-      </div>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
 
 export default Task;

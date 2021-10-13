@@ -4,7 +4,12 @@ import { InputTags } from "react-bootstrap-tagsinput";
 import "react-bootstrap-tagsinput/dist/index.css";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { createNewTaskFetch, getTaskByIdFetch, updateTask } from "../../api";
+import {
+  createNewTaskFetch,
+  getTaskByIdFetch,
+  updateTask,
+  uploadImagesFetch,
+} from "../../api";
 import "./TaskEditor.scss";
 
 const NewTask = ({ locale, theme }) => {
@@ -13,6 +18,7 @@ const NewTask = ({ locale, theme }) => {
     task_condition: "",
     task_tags: "",
   });
+  const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
   const history = useHistory();
   const user = useSelector((store) => store.user);
@@ -28,8 +34,6 @@ const NewTask = ({ locale, theme }) => {
   }, [defaultValue]);
 
   const handleSubmit = (e) => {
-    //const files = e.target[8].files;
-    console.log(e.target);
     e.preventDefault();
     const newTaskData = {
       type: user.type,
@@ -42,9 +46,15 @@ const NewTask = ({ locale, theme }) => {
       task_condition: e.target[2].value,
       task_tags: tags.join(","),
       task_answer: e.target[3].value,
+      task_images: images.join(),
     };
+    console.log(images);
     if (!id) createNewTaskFetch(newTaskData).then(() => history.push("/tasks"));
     if (id) updateTask(newTaskData).then(() => history.push("/tasks"));
+  };
+
+  const uploadImage = (e) => {
+    uploadImagesFetch(e.target.files).then((res) => setImages(res));
   };
 
   return (
@@ -107,7 +117,12 @@ const NewTask = ({ locale, theme }) => {
             <Form.Label style={{ marginTop: "20px" }}>
               {locale.newtask.selectimage}
             </Form.Label>
-            <Form.Control accept="image/png, image/jpeg" type="file" multiple />
+            <Form.Control
+              accept="image/png, image/jpeg"
+              type="file"
+              onChange={uploadImage}
+              multiple
+            />
             <Button
               variant={theme === "dark" ? "secondary" : "primary"}
               className="taskeditor__createBtn"

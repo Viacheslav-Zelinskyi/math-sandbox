@@ -1,7 +1,51 @@
 const db = require("../db");
-const { Sequelize: sequelize } = require("sequelize");
+const { Sequelize: sequelize, Sequelize } = require("sequelize");
 
 class TaskService {
+  addComment(task_id, comment, user_id) {
+    return new Promise((res, rej) => {
+      db.comments
+        .create({
+          task_id: task_id,
+          comment: comment,
+          user_id: user_id,
+        })
+        .then(() => res({ status: "Comment Created" }))
+        .catch(() => res({ status: "Error" }));
+    });
+  }
+
+  addCommentLike(user_id, comment_id, task_id, is_positive) {
+    return new Promise((res, rej) => {
+      db.comments_likes
+        .findOrCreate({
+          where: { user_id: user_id, comment_id: comment_id },
+          defaults: {
+            user_id: user_id,
+            task_id: task_id,
+            comment_id: comment_id,
+            is_positive: is_positive,
+          },
+        })
+        .then((result) => res(!result[1]));
+    });
+  }
+
+  addResponse(user_id, task_id, response_ranking) {
+    return new Promise((res, rej) => {
+      db.tasks_response
+        .findOrCreate({
+          where: { user_id: user_id, task_id: task_id },
+          defaults: {
+            user_id: user_id,
+            task_id: task_id,
+            response_ranking: response_ranking,
+          },
+        })
+        .then((result) => res(!result[1]));
+    });
+  }
+
   getAllTasks(from, interval, fromEnd, user_id) {
     return new Promise((res, rej) => {
       db.tasks
@@ -11,6 +55,14 @@ class TaskService {
           order: fromEnd ? [["task_id", "DESC"]] : null,
           where: user_id ? { user_id: user_id } : {},
         })
+        .then((result) => res(result));
+    });
+  }
+
+  getCommentsLikes(task_id) {
+    return new Promise((res, rej) => {
+      db.comments_likes
+        .findAll({ where: { task_id: task_id } })
         .then((result) => res(result));
     });
   }
@@ -44,6 +96,21 @@ class TaskService {
       db.tasks
         .findAll({ where: { task_id: tasksId } })
         .then((result) => res(result));
+    });
+  }
+
+  getTaskRating(task_id) {
+    return new Promise((res, rej) => {
+      db.tasks_response
+        .findAll({
+          where: { task_id: task_id },
+          attributes: [
+            [Sequelize.fn("AVG", Sequelize.col("response_ranking")), "rating"],
+          ],
+        })
+        .then((result) => {
+          res(parseFloat(result[0].dataValues.rating));
+        });
     });
   }
 
@@ -90,83 +157,22 @@ class TaskService {
     });
   }
 
-  addComment(task_id, comment, user_id) {
+  checkAnswer(task_answer, user_answer, user_id, task_id) {
     return new Promise((res, rej) => {
-      db.comments
-        .create({
-          task_id: task_id,
-          comment: comment,
-          user_id: user_id,
-        })
-        .then(() => res({ status: "Comment Created" }))
-        .catch(() => res({ status: "Error" }));
-    });
-  }
-
-  addCommentLike(user_id, comment_id, is_positive) {
-    return new Promise((res, rej) => {
-      db.comments_likes
-        .findOrCreate({
-          where: { user_id: user_id, comment_id: comment_id },
-          defaults: {
+      if (
+        task_answer.replace(/\s/g, "") ===
+        user_answer.replace(/\s/g, "").toLowerCase()
+      ) {
+        db.users_answers
+          .create({
             user_id: user_id,
-            comment_id: comment_id,
-            is_positive: is_positive,
-          },
-        })
-        .then((result) => res(!result[1]));
-    });
-  }
-
-  addResponse(user_id, task_id, response_ranking) {
-    return new Promise((res, rej) => {
-      db.tasks_response
-        .findOrCreate({
-          where: { user_id: user_id, task_id: task_id },
-          defaults: {
-            user_id: user_id,
+            answer: user_answer.replace(/\s/g, "").toLowerCase(),
             task_id: task_id,
-            response_ranking: response_ranking,
-          },
-        })
-        .then((result) => res(!result[1]));
-    });
-  }
-
-  updateTask(taskData, task_id, user_id, is_admin) {
-    return new Promise((res, rej) => {
-      console.log(task_id, user_id, is_admin)
-      db.tasks
-        .update(taskData, {
-          where: is_admin
-            ? { task_id: task_id }
-            : { task_id: task_id, user_id: user_id },
-        })
-        .then((result) => res(result));
-    });
-  }
-
-  updateCommentLike(user_id, comment_id, is_positive) {
-    return new Promise((res, rej) => {
-      db.comments_likes
-        .update(
-          { is_positive: is_positive },
-          { where: { user_id: user_id, comment_id: comment_id } }
-        )
-        .then(() => res({ status: "Like updated" }))
-        .catch(() => res({ error: "Like don't updated" }));
-    });
-  }
-
-  updateResponse(user_id, task_id, response_ranking) {
-    return new Promise((res, rej) => {
-      db.tasks_response
-        .update(
-          { response_ranking: response_ranking },
-          { where: { user_id: user_id, task_id: task_id } }
-        )
-        .then(() => res({ status: "Response updated" }))
-        .catch(() => res({ error: "Response don't updated" }));
+          })
+          .then(() => res({ isCorrect: true }));
+      } else {
+        res({ isCorrect: false });
+      }
     });
   }
 
@@ -216,6 +222,42 @@ class TaskService {
         .create(taskData)
         .then(() => res({ status: "Task Created" }))
         .catch((err) => res({ status: err }));
+    });
+  }
+
+  updateTask(taskData, task_id, user_id, is_admin) {
+    return new Promise((res, rej) => {
+      db.tasks
+        .update(taskData, {
+          where: is_admin
+            ? { task_id: task_id }
+            : { task_id: task_id, user_id: user_id },
+        })
+        .then((result) => res(result));
+    });
+  }
+
+  updateCommentLike(user_id, comment_id, is_positive) {
+    return new Promise((res, rej) => {
+      db.comments_likes
+        .update(
+          { is_positive: is_positive },
+          { where: { user_id: user_id, comment_id: comment_id } }
+        )
+        .then(() => res({ status: "Like updated" }))
+        .catch(() => res({ error: "Like don't updated" }));
+    });
+  }
+
+  updateResponse(user_id, task_id, response_ranking) {
+    return new Promise((res, rej) => {
+      db.tasks_response
+        .update(
+          { response_ranking: response_ranking },
+          { where: { user_id: user_id, task_id: task_id } }
+        )
+        .then(() => res({ status: "Response updated" }))
+        .catch(() => res({ error: "Response don't updated" }));
     });
   }
 }
