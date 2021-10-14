@@ -7,6 +7,7 @@ import { useHistory, useParams } from "react-router-dom";
 import {
   createNewTaskFetch,
   getTaskByIdFetch,
+  getThemesFetch,
   updateTask,
   uploadImagesFetch,
 } from "../../api";
@@ -20,14 +21,15 @@ const NewTask = ({ locale, theme }) => {
   });
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
+  const [themes, setThemes] = useState([]);
   const history = useHistory();
   const user = useSelector((store) => store.user);
-  const themes = ["Math", "Bio", "C++"];
   const { id } = useParams();
 
   useEffect(() => {
     getTaskByIdFetch(id).then((res) => setDefaultValue(res));
-  }, [id]);
+    getThemesFetch().then((res) => setThemes(res));
+  }, []);
 
   useEffect(() => {
     setTags(defaultValue.task_tags.split(","));
@@ -48,7 +50,6 @@ const NewTask = ({ locale, theme }) => {
       task_answer: e.target[3].value,
       task_images: images.join(),
     };
-    console.log(images);
     if (!id) createNewTaskFetch(newTaskData).then(() => history.push("/tasks"));
     if (id) updateTask(newTaskData).then(() => history.push("/tasks"));
   };
@@ -88,7 +89,9 @@ const NewTask = ({ locale, theme }) => {
               defaultValue={defaultValue.task_theme}
             >
               {themes.map((item) => (
-                <option>{item}</option>
+                <option value={item}>
+                  {locale.themes[item.replace(/\s/g, "")]}
+                </option>
               ))}
             </Form.Select>
             <Form.Label style={{ marginTop: "20px" }}>

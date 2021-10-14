@@ -67,6 +67,13 @@
       "result": "Результат поиска",
       "searchplaceholder": "Введите тэг или описание задачи для поиска",
       "all": "Все"
+    },
+    "themes": {
+      "algebra": "Алгебра",
+      "geometry": "Геометрия",
+      "algorithms": "Алгоритмы",
+      "js": "JavaScript",
+      "ts": "TypeScript"
     }
   },
   "en": {
@@ -137,6 +144,13 @@
       "result": "Search result",
       "searchplaceholder": "Enter tags or description for search",
       "all": "All"
+    },
+    "themes": {
+      "algebra": "Algebra",
+      "geometry": "Geometry",
+      "algorithms": "Algorithms",
+      "js": "JavaScript",
+      "ts": "TypeScript"
     }
   }
 }

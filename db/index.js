@@ -18,6 +18,7 @@ const TasksResponse = require("./tasks_response")(sequelize);
 const Comments = require("./comments")(sequelize);
 const CommentsLikes = require("./comments_likes")(sequelize);
 const UsersAnswers = require('./users_answers')(sequelize);
+const Themes = require('./themes')(sequelize);
 
 Comments.belongsTo(Users, { foreignKey: "user_id" });
 
@@ -29,5 +30,6 @@ module.exports = {
   tasks_response: TasksResponse,
   comments: Comments,
   comments_likes: CommentsLikes,
-  users_answers: UsersAnswers
+  users_answers: UsersAnswers,
+  themes: Themes
 };

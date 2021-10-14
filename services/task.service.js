@@ -141,6 +141,14 @@ class TaskService {
     });
   }
 
+  getTagsFromTasksById(tasksId) {
+    return new Promise((res, rej) => {
+      db.tasks
+        .findAll({ where: { task_id: tasksId }, attributes: ['task_tags'] })
+        .then((result) => res(result.map(item=>item.task_tags).join().split(',')));
+    });
+  }
+
   countCompletedTask(user_id) {
     return new Promise((res, rej) => {
       db.users_answers
@@ -222,6 +230,14 @@ class TaskService {
         .create(taskData)
         .then(() => res({ status: "Task Created" }))
         .catch((err) => res({ status: err }));
+    });
+  }
+
+  getThemes() {
+    return new Promise((res, rej) => {
+      db.themes
+        .findAll({ attributes: ["theme"] })
+        .then((result) => res(result));
     });
   }
 

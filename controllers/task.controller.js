@@ -154,8 +154,13 @@ class TaskController {
     }
     if (authData.hasOwnProperty("error"))
       return res.send({ error: "User not authorized" });
-    const {task_answer} = await TaskService.getOneTask(req.body.task_id);
-    const result = await TaskService.checkAnswer(task_answer, req.body.answer, req.user.user_id, req.body.task_id);
+    const { task_answer } = await TaskService.getOneTask(req.body.task_id);
+    const result = await TaskService.checkAnswer(
+      task_answer,
+      req.body.answer,
+      req.user.user_id,
+      req.body.task_id
+    );
     res.send(result);
   }
 
@@ -216,7 +221,7 @@ class TaskController {
 
   async getCommentsLikes(req, res) {
     const likes = await TaskService.getCommentsLikes(req.query.task_id);
-    res.send({likes: likes, user_id: req.user.user_id || null});
+    res.send({ likes: likes, user_id: req.user.user_id || null });
   }
 
   async getTask(req, res) {
@@ -238,10 +243,22 @@ class TaskController {
     res.send(tasks);
   }
 
+  async getPopularTags(req, res){
+    const tasksId = await TaskService.getPopularTasksId();
+    const tags = await TaskService.getTagsFromTasksById(tasksId);
+    res.send({tags: tags});
+  }
+
   async getPopularTask(req, res) {
     const tasksId = await TaskService.getPopularTasksId();
     const tasks = await TaskService.getTasksById(tasksId);
+    console.log(tasksId)             
     res.send(tasks);
+  }
+
+  async getThemes(req, res) {
+    const themes = await TaskService.getThemes();
+    res.send(themes.map(item=>item.theme));
   }
 
   async updateTask(req, res) {

@@ -61,6 +61,14 @@ export const getPopularTaskFetch = async () => {
   return response.json();
 };
 
+export const getPopularTagsFetch = async () => {
+  const response = await fetch(
+    "http://localhost:5000/api/task/tags"
+    // window.location.protocol + "//" + window.location.host + "/api/task/tags",
+  );
+  return response.json();
+};
+
 export const getNewTaskFetch = async () => {
   const response = await fetch(
     "http://localhost:5000/api/task/last"
@@ -92,6 +100,14 @@ export const getCommentsLikes = async (task_id, username) => {
   );
   return response.json();
 };
+
+export const getThemesFetch = async() => {
+  const response = await fetch(
+    `http://localhost:5000/api/task/themes`
+    // window.location.protocol + "//" + window.location.host + `/api/task/themes`,
+  );
+  return response.json();
+}
 
 export const deleteTask = async (taskData) => {
   const response = await fetch(

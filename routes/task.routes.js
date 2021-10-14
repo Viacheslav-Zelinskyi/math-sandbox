@@ -26,9 +26,13 @@ router
   .get(TaskController.getTask)
   .post(TaskController.addResponse);
 
-router.route("/answer").post(TaskController.checkAnswer)
+router.route("/themes").get(TaskController.getThemes);
+
+router.route("/answer").post(TaskController.checkAnswer);
 
 router.route("/last").get(TaskController.getLastTasks);
+
+router.route("/tags").get(TaskController.getPopularTags)
 
 router.route("/completed").get(TaskController.countCompletedTask);
 

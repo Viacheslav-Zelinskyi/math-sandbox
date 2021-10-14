@@ -51,3 +51,8 @@ CREATE TABLE tasks_views (
   view_id SERIAL PRIMARY KEY NOT NULL,
   task_id int NOT NULL
 );
+
+CREATE TABLE themes (
+  theme_id SERIAL PRIMARY KEY NOT NULL,
+  theme TEXT
+)

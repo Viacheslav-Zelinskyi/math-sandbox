@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { Badge, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { getPopularTaskFetch, getNewTaskFetch } from "../../api";
+import { Link, useHistory } from "react-router-dom";
+import { getPopularTaskFetch, getNewTaskFetch, getPopularTagsFetch } from "../../api";
 import "./Main.scss";
 
 const MainPage = ({ theme, locale }) => {
   const [popularTasks, setPopularTasks] = useState([]);
   const [newTasks, setNewTasks] = useState([]);
+  const [tags, setTags] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
     getPopularTaskFetch().then((res) => setPopularTasks(res));
     getNewTaskFetch().then((res) => setNewTasks(res));
+    getPopularTagsFetch().then(res=>setTags(res.tags));
   }, []);
+
+  console.log(tags)
 
   return (
     <div
@@ -26,7 +31,7 @@ const MainPage = ({ theme, locale }) => {
           (theme === "dark" ? " mainpage__container-dark" : "")
         }
       >
-        <TagsBlock tags={tagsMock} theme={theme} />
+        <TagsBlock tags={tags} theme={theme} history={history} />
         <div className="mainpage__maincontent">
           <TaskBlock
             title={locale.mainpage.new}
@@ -79,19 +84,18 @@ const TaskBlock = ({ title, tasks, theme, locale }) => (
   </div>
 );
 
-const TagsBlock = ({ tags, theme }) => (
+const TagsBlock = ({ tags, theme, history }) => (
   <div className="tagsblock__wrapper">
     {tags.map((tag) => (
       <Badge
         bg={theme === "dark" ? "secondary" : "success"}
         className="tagsblock__tag"
+        onClick={()=>history.push(`/tasks?search=${tag}`)}
       >
         {tag}
       </Badge>
     ))}
   </div>
 );
-
-const tagsMock = ["math", "java", "algebra", "bio", "algorithm"];
 
 export default MainPage;

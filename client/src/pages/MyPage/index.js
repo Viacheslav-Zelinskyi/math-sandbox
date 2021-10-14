@@ -2,6 +2,7 @@ import BootstrapTable from "react-bootstrap-table-next";
 import { Button } from "react-bootstrap";
 import filterFactory, { textFilter } from "react-bootstrap-table2-filter";
 import { Link, useHistory } from "react-router-dom";
+import ReactPaginate from 'react-paginate';
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import {
@@ -17,13 +18,16 @@ const MyPage = ({ theme, locale }) => {
   const user = useSelector((store) => store.user);
   const [completedTask, setCompletedTask] = useState({ count: 0 });
   const [myTasks, setMyTasks] = useState({ count: 0, tasks: [] });
+  const [page, setPage] = useState(0);
   const history = useHistory();
 
   useEffect(() => {
     getNumberOfCompletedTask(user.username).then((res) =>
       setCompletedTask(res)
     );
-    getMyTasksFetch(user.username, 0, 10).then((res) => setMyTasks(res));
+    getMyTasksFetch(user.username, page * 10, 10).then((res) =>
+      setMyTasks(res)
+    );
   }, [user.username, myTasks]);
 
   return (
@@ -73,6 +77,18 @@ const MyPage = ({ theme, locale }) => {
             })}
             columns={columns(locale)}
           />
+          <ReactPaginate
+          previousLabel={'<'}
+          nextLabel={'>'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          pageCount={myTasks.count/10}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={(e)=>setPage(e.selected)}
+          containerClassName={"paginate__pagination paginate__pagination--" + theme}
+          activeClassName={"paginate__active paginate__active--" + theme}
+        />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Badge, Button, Form } from "react-bootstrap";
+import { Alert, Badge, Button, Form } from "react-bootstrap";
 import {
   HandThumbsDown,
   HandThumbsDownFill,
@@ -27,12 +27,14 @@ const Task = ({ theme, locale }) => {
     task_name: "",
     task_tags: "",
     task_images: "",
+    task_theme: "",
     comments: [],
     rating: 0,
   });
   const [currentImage, setCurrentImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [rating, setRating] = useState(0);
+  const [isAnswerTrue, setIsAnswerTrue] = useState();
   const user = useSelector((store) => store.user);
   let { id } = useParams();
 
@@ -91,9 +93,7 @@ const Task = ({ theme, locale }) => {
       password: user.password,
       task_id: id,
       answer: e.target[0].value,
-    }).then((res) =>
-      alert(res.isCorrect ? locale.task.correct : locale.task.incorrect)
-    );
+    }).then((res) => setIsAnswerTrue(res.isCorrect));
   };
 
   return (
@@ -102,7 +102,7 @@ const Task = ({ theme, locale }) => {
         <h3>
           {locale.task.task} №{id}. {task.task_name}
         </h3>
-        <p className="task__theme">{task.task_theme}</p>
+        <p className="task__theme">{locale.themes[task.task_theme.replace(/\s/g, "")]}</p>
         <div className="task__tags">
           {task.task_tags.split(",").map((tag) => (
             <Badge className="task__tag" bg="success">
@@ -137,31 +137,41 @@ const Task = ({ theme, locale }) => {
           )}
         </div>
         <StarRatings
+          disabled={true}
           rating={rating}
           starRatedColor="blue"
-          changeRating={addResponse}
+          changeRating={user.username ? addResponse : null}
           numberOfStars={5}
           name="rating"
           starDimension="40px"
         />
-        <div className="task__answer">
-          <h4>{locale.task.answer}:</h4>
-          <Form onSubmit={checkAnswer}>
-            <Form.Control as="textarea" row="1"></Form.Control>
-            <Button type="submit">{locale.task.send}</Button>
-          </Form>
-        </div>
+        {user.username && typeof isAnswerTrue==='undefined' ? (
+          <div className="task__answer">
+            <h4>{locale.task.answer}:</h4>
+            <Form onSubmit={checkAnswer}>
+              <Form.Control as="textarea" row="1"></Form.Control>
+              <Button type="submit">{locale.task.send}</Button>
+            </Form>
+          </div>
+        ) : null}
+        {isAnswerTrue === true ? (
+          <Alert variant="success" style={{marginTop: "30px"}}>{locale.task.correct}</Alert>
+        ) : isAnswerTrue === false ? (
+          <Alert variant="danger" style={{marginTop: "30px"}}>{locale.task.incorrect}</Alert>
+        ) : null}
         <div className="task__comments">
           <h4>{locale.task.comments}</h4>
           <hr></hr>
-          <div className="task__addcomment">
-            <Form.Control
-              placeholder={locale.task.commentPlaceholder}
-              onKeyDown={(e) => {
-                if (e.code === "Enter") addComment(e.target.value);
-              }}
-            ></Form.Control>
-          </div>
+          {user.username ? (
+            <div className="task__addcomment">
+              <Form.Control
+                placeholder={locale.task.commentPlaceholder}
+                onKeyDown={(e) => {
+                  if (e.code === "Enter") addComment(e.target.value);
+                }}
+              ></Form.Control>
+            </div>
+          ) : null}
           <Comments
             comments={task.comments}
             task_id={id}
@@ -223,11 +233,19 @@ const Comments = ({ comments, theme, task_id, user }) => {
                     item.is_positive === true
                 ).length > 0 ? (
                   <HandThumbsUpFill
-                    onClick={() => deleteCommentLike(comment.comment_id)}
+                    onClick={() =>
+                      user.username
+                        ? deleteCommentLike(comment.comment_id)
+                        : null
+                    }
                   />
                 ) : (
                   <HandThumbsUp
-                    onClick={() => addCommentLike(true, comment.comment_id)}
+                    onClick={() =>
+                      user.username
+                        ? addCommentLike(true, comment.comment_id)
+                        : null
+                    }
                   />
                 )}
                 {
@@ -245,11 +263,19 @@ const Comments = ({ comments, theme, task_id, user }) => {
                     item.is_positive === false
                 ).length > 0 ? (
                   <HandThumbsDownFill
-                    onClick={() => deleteCommentLike(comment.comment_id)}
+                    onClick={() =>
+                      user.username
+                        ? deleteCommentLike(comment.comment_id)
+                        : null
+                    }
                   />
                 ) : (
                   <HandThumbsDown
-                    onClick={() => addCommentLike(false, comment.comment_id)}
+                    onClick={() =>
+                      user.username
+                        ? addCommentLike(false, comment.comment_id)
+                        : null
+                    }
                   />
                 )}
                 {

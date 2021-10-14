@@ -70,3 +70,35 @@
     }
   }
 }
+
+.paginate {
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+    background-color: #e9e9e9;
+    ul {
+      display: inline-block;
+    }
+    li {
+      display: inline-block;
+      margin: 15px;
+    }
+    &--dark {
+      background-color: #2e2e2e;
+    }
+  }
+  &__active {
+    background-color: #3b996d;
+    color: rgb(255, 255, 255);
+    border-radius: 30px;
+    padding-left: 8px;
+    padding-right: 8px;
+    &--dark {
+      background-color: #ffffff;
+      color: rgb(0, 0, 0);
+    }
+  }
+}

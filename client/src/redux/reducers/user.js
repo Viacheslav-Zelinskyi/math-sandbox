@@ -4,6 +4,7 @@ const type = localStorage.getItem("type");
 const username = localStorage.getItem("username");
 const password = localStorage.getItem("password");
 const token = localStorage.getItem("token");
+const is_admin = localStorage.getItem("is_admin");
 
 const initialState = username
   ? {
@@ -11,6 +12,7 @@ const initialState = username
       username: username,
       password: password,
       token: token,
+      is_admin: is_admin
     }
   : {};
 
@@ -24,10 +26,12 @@ export default createReducer(initialState, {
       state.username = action.payload.username;
       state.password = action.payload.password || null;
       state.token = action.payload.token || null;
+      state.is_admin = action.payload.is_admin;
       localStorage.setItem("type", action.payload.type);
       localStorage.setItem("username", action.payload.username);
       localStorage.setItem("password", action.payload.password);
       localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("is_admin", action.payload.is_admin);
     }
   },
   [logOut]: function (state, action) {
@@ -35,9 +39,11 @@ export default createReducer(initialState, {
     delete state.username;
     delete state.password;
     delete state.token;
+    delete state.is_admin;
     localStorage.removeItem("type");
     localStorage.removeItem("username");
     localStorage.removeItem("password");
     localStorage.removeItem("token");
+    localStorage.removeItem("is_admin");
   },
 });
