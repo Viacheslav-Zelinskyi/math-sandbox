@@ -1,25 +1,32 @@
 import BootstrapTable from "react-bootstrap-table-next";
 import { Button } from "react-bootstrap";
 import filterFactory, { textFilter } from "react-bootstrap-table2-filter";
-import { Link, useHistory } from "react-router-dom";
-import ReactPaginate from 'react-paginate';
+import { Link, useHistory, useParams } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import {
   deleteTask,
   getMyTasksFetch,
   getNumberOfCompletedTask,
+  getUserByIdFetch,
 } from "../../api";
 import "./MyPage.scss";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
 
 const MyPage = ({ theme, locale }) => {
-  const user = useSelector((store) => store.user);
+  const { id } = useParams();
+  const myUser = useSelector((store) => store.user);
+  const [user, setUser] = useState(id ? { username: "" } : myUser);
   const [completedTask, setCompletedTask] = useState({ count: 0 });
   const [myTasks, setMyTasks] = useState({ count: 0, tasks: [] });
   const [page, setPage] = useState(0);
   const history = useHistory();
+
+  useEffect(() => {
+    if (id) getUserByIdFetch(id).then((res) => setUser(res));
+  }, []);
 
   useEffect(() => {
     getNumberOfCompletedTask(user.username).then((res) =>
@@ -28,7 +35,13 @@ const MyPage = ({ theme, locale }) => {
     getMyTasksFetch(user.username, page * 10, 10).then((res) =>
       setMyTasks(res)
     );
-  }, [user.username, myTasks]);
+  }, [user]);
+
+  useEffect(() => {
+    getMyTasksFetch(user.username, page * 10, 10).then((res) =>
+      setMyTasks(res)
+    );
+  }, [page]);
 
   return (
     <div
@@ -54,7 +67,7 @@ const MyPage = ({ theme, locale }) => {
         <hr />
         <div className="mypage__tablelabel">
           <p>{locale.mypage.mytask}</p>
-          <Link to="/taskeditor">
+          <Link to={`/taskeditor?user_id=${id}`}>
             <Button variant={theme === "dark" ? "secondary" : "success"}>
               {locale.mypage.newtask}
             </Button>
@@ -71,35 +84,41 @@ const MyPage = ({ theme, locale }) => {
                 user,
                 setMyTasks,
                 myTasks,
-                history
+                history,
+                id
               );
               return item;
             })}
             columns={columns(locale)}
           />
           <ReactPaginate
-          previousLabel={'<'}
-          nextLabel={'>'}
-          breakLabel={'...'}
-          breakClassName={'break-me'}
-          pageCount={myTasks.count/10}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={(e)=>setPage(e.selected)}
-          containerClassName={"paginate__pagination paginate__pagination--" + theme}
-          activeClassName={"paginate__active paginate__active--" + theme}
-        />
+            previousLabel={"<"}
+            nextLabel={">"}
+            breakLabel={"..."}
+            breakClassName={"break-me"}
+            pageCount={myTasks.count / 10}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={(e) => setPage(e.selected)}
+            containerClassName={
+              "paginate__pagination paginate__pagination--" + theme
+            }
+            activeClassName={"paginate__active paginate__active--" + theme}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-const editbar = (id, locale, user, setMyTasks, myTasks, history) => (
+const editbar = (id, locale, user, setMyTasks, myTasks, history, user_id) => (
   <div
     style={{ display: "flex", justifyContent: "space-around", width: "100%" }}
   >
-    <Button variant="warning" onClick={() => history.push(`/taskeditor/${id}`)}>
+    <Button
+      variant="warning"
+      onClick={() => history.push(`/taskeditor/${id}?user_id=${user_id}`)}
+    >
       {locale.mypage.edit}
     </Button>
     <Button

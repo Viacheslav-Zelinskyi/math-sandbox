@@ -16,8 +16,6 @@ const MainPage = ({ theme, locale }) => {
     getPopularTagsFetch().then(res=>setTags(res.tags));
   }, []);
 
-  console.log(tags)
-
   return (
     <div
       className={

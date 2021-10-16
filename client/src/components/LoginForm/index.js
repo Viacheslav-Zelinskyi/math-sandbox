@@ -22,7 +22,12 @@ const LoginForm = ({ locale, theme, closeWindow }) => {
     }).then((res) => {
       if (res.loggedIn || res.isUserCreated) {
         dispatch(
-          logIn({ type: "native", username: username, password: password })
+          logIn({
+            type: "native",
+            username: username,
+            password: password,
+            is_admin: res.is_admin,
+          })
         );
         closeWindow();
       } else alert(res?.error);
@@ -45,6 +50,7 @@ const LoginForm = ({ locale, theme, closeWindow }) => {
             type: type,
             username: profileObj?.name || name,
             token: tokenId || accessToken,
+            is_admin: res.is_admin,
           })
         );
         closeWindow();

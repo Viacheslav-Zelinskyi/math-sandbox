@@ -3,11 +3,12 @@ import { Form, Button } from "react-bootstrap";
 import { InputTags } from "react-bootstrap-tagsinput";
 import "react-bootstrap-tagsinput/dist/index.css";
 import { useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import {
   createNewTaskFetch,
   getTaskByIdFetch,
   getThemesFetch,
+  getUserByIdFetch,
   updateTask,
   uploadImagesFetch,
 } from "../../api";
@@ -19,14 +20,17 @@ const NewTask = ({ locale, theme }) => {
     task_condition: "",
     task_tags: "",
   });
+  const { id } = useParams();
+  const user_id = useQuery().get("user_id");
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
   const [themes, setThemes] = useState([]);
   const history = useHistory();
-  const user = useSelector((store) => store.user);
-  const { id } = useParams();
+  const myUser = useSelector((store) => store.user);
+  const [user, setUser] = useState(user_id ? { username: "" } : myUser);
 
   useEffect(() => {
+    if (user_id) getUserByIdFetch(user_id).then((res) => setUser(res));
     getTaskByIdFetch(id).then((res) => setDefaultValue(res));
     getThemesFetch().then((res) => setThemes(res));
   }, []);
@@ -38,10 +42,11 @@ const NewTask = ({ locale, theme }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newTaskData = {
-      type: user.type,
-      user_name: user.username,
-      token: user.token,
-      password: user.password,
+      type: myUser.type,
+      user_name: myUser.username,
+      token: myUser.token,
+      password: myUser.password,
+      selected_user_id: user.user_id,
       task_id: id,
       task_name: e.target[0].value,
       task_theme: e.target[1].value,
@@ -139,5 +144,9 @@ const NewTask = ({ locale, theme }) => {
     </div>
   );
 };
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 export default NewTask;

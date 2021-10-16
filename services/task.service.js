@@ -144,8 +144,15 @@ class TaskService {
   getTagsFromTasksById(tasksId) {
     return new Promise((res, rej) => {
       db.tasks
-        .findAll({ where: { task_id: tasksId }, attributes: ['task_tags'] })
-        .then((result) => res(result.map(item=>item.task_tags).join().split(',')));
+        .findAll({ where: { task_id: tasksId }, attributes: ["task_tags"] })
+        .then((result) =>
+          res(
+            result
+              .map((item) => item.task_tags)
+              .join()
+              .split(",")
+          )
+        );
     });
   }
 

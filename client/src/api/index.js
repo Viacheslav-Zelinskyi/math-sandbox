@@ -11,6 +11,32 @@ export const addCommentLikeFetch = async (commentData) => {
   return response.json();
 };
 
+export const changeAdminStatusFetch = async(userData) => {
+  const response = await fetch(
+    `http://localhost:5000/api/user/admin`,
+    // window.location.protocol + "//" + window.location.host + `/api/user/admin`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(userData),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  return response.json();
+}
+
+export const changeBlockedStatusFetch = async(userData) => {
+  const response = await fetch(
+    `http://localhost:5000/api/user/block`,
+    // window.location.protocol + "//" + window.location.host + `/api/user/block`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(userData),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  return response.json();
+}
+
 export const logInFetch = async (authData) => {
   const response = await fetch(
     `http://localhost:5000/api/auth`,
@@ -44,6 +70,22 @@ export const getAllTaskFetch = async (from, interval) => {
   );
   return response.json();
 };
+
+export const getAllUsersFetch = async () => {
+  const response = await fetch(
+    `http://localhost:5000/api/user`
+    // window.location.protocol + "//" + window.location.host + `/api/user`,
+  );
+  return response.json();
+}
+
+export const getUserByIdFetch = async (user_id) => {
+  const response = await fetch(
+    `http://localhost:5000/api/user?user_id=${user_id}`
+    // window.location.protocol + "//" + window.location.host + `/api/user`,
+  );
+  return response.json();
+}
 
 export const getTaskByIdFetch = async (id) => {
   const response = await fetch(
@@ -134,6 +176,19 @@ export const deleteCommentLikeFetch = async (commentData) => {
   );
   return response.json();
 };
+
+export const deleteUserFetch = async (userData) => {
+  const response = await fetch(
+    `http://localhost:5000/api/user`,
+    // window.location.protocol + "//" + window.location.host + `/api/user`,
+    {
+      method: "DELETE",
+      body: JSON.stringify(userData),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  return response.json();
+}
 
 export const createNewTaskFetch = async (taskData) => {
   const response = await fetch(

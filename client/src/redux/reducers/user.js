@@ -26,7 +26,7 @@ export default createReducer(initialState, {
       state.username = action.payload.username;
       state.password = action.payload.password || null;
       state.token = action.payload.token || null;
-      state.is_admin = action.payload.is_admin;
+      state.is_admin = action.payload.is_admin || false;
       localStorage.setItem("type", action.payload.type);
       localStorage.setItem("username", action.payload.username);
       localStorage.setItem("password", action.payload.password);

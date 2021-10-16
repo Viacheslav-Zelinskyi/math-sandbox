@@ -13,7 +13,8 @@
       "theme": "Тема",
       "light": "Светлая",
       "dark": "Тёмная",
-      "tasks": "Задачи"
+      "tasks": "Задачи",
+      "administration": "Администрирование"
     },
     "loginform": {
       "login": "Войти",
@@ -74,6 +75,19 @@
       "algorithms": "Алгоритмы",
       "js": "JavaScript",
       "ts": "TypeScript"
+    },
+    "adminPanel": {
+      "users": "Пользователи",
+      "unblock": "Разблокировать",
+      "block": "Заблокировать",
+      "appointAdmin": "Назначить админ.",
+      "deleteAdmin": "Удалить админ.",
+      "delete": "Удалить",
+      "username": "Имя польз.",
+      "administrator": "Админ.",
+      "blocked": "Заблк.",
+      "yes": "Да",
+      "no": "Нет"
     }
   },
   "en": {
@@ -90,7 +104,8 @@
       "theme": "Theme",
       "light": "Light",
       "dark": "Dark",
-      "tasks": "Tasks"
+      "tasks": "Tasks",
+      "administration": "Administration"
     },
     "loginform": {
       "login": "Log In",
@@ -151,6 +166,19 @@
       "algorithms": "Algorithms",
       "js": "JavaScript",
       "ts": "TypeScript"
+    },
+    "adminPanel": {
+      "users": "Users",
+      "unblock": "Unblock",
+      "block": "Block",
+      "appointAdmin": "Appoint Admin",
+      "deleteAdmin": "Delete Admin",
+      "delete": "Delete",
+      "username": "Username",
+      "administrator": "Admin.",
+      "blocked": "Blocked",
+      "yes": "Yes",
+      "no": "No"
     }
   }
 }

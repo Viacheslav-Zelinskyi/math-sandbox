@@ -16,7 +16,7 @@ class AuthController {
           req.body.password,
           req.user.user_password
         );
-        res.send(checkPassword ? { loggedIn: true } : { loggedIn: false });
+        res.send(checkPassword ? { loggedIn: true, is_admin: req.user.is_admin } : { loggedIn: false });
         break;
       case "register":
         if (req.user?.hasOwnProperty("user_id")) {
@@ -34,7 +34,7 @@ class AuthController {
           break;
         }
         if (req.user?.user_social_id === tokenCheck.id) {
-          res.send({ loggedIn: true });
+          res.send({ loggedIn: true, is_admin: req.user.is_admin });
           break;
         }
         AuthService.createUser(tokenCheck.name, null, tokenCheck.id);
@@ -47,7 +47,7 @@ class AuthController {
           break;
         }
         if (req.user?.user_social_id === ticket.id) {
-          res.send({ loggedIn: true });
+          res.send({ loggedIn: true, is_admin: req.user.is_admin });
           break;
         }
         AuthService.createUser(ticket.name, null, ticket.id);

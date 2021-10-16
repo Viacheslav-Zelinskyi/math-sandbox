@@ -6,7 +6,7 @@ import {
   NavDropdown,
   FormControl,
 } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { logOut } from "../../redux/reducers/user";
 import { LoginForm } from "../index";
@@ -15,6 +15,7 @@ import "./Header.scss";
 const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
   const [isOpenedLogin, setIsOpenedLogin] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((store) => store.user);
   const history = useHistory();
   return (
     <div className="header">
@@ -24,6 +25,11 @@ const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
+              {user.is_admin ? (
+                <Nav.Link onClick={() => history.push("/administration")}>
+                  {locale.navbar.administration}
+                </Nav.Link>
+              ) : null}
               <Nav.Link onClick={() => history.push("/")}>
                 {locale.navbar.home}
               </Nav.Link>
@@ -40,7 +46,9 @@ const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
                     <NavDropdown.Item onClick={() => history.push("/mypage")}>
                       {locale.navbar.mypage}
                     </NavDropdown.Item>
-                    <NavDropdown.Item onClick={()=>dispatch(logOut())}>{locale.navbar.logout}</NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => dispatch(logOut())}>
+                      {locale.navbar.logout}
+                    </NavDropdown.Item>
                   </>
                 )}
               </NavDropdown>
