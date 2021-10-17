@@ -63,6 +63,17 @@ const NewTask = ({ locale, theme }) => {
     uploadImagesFetch(e.target.files).then((res) => setImages(res));
   };
 
+  const addNewLine = (e) => {
+    if (e.keyCode == 13) {
+      e.preventDefault();
+      e.target.value =
+        e.target.value.substring(0, e.target.selectionStart) +
+        "" +
+        "\n" +
+        e.target.value.substring(e.target.selectionEnd, e.target.value.length);
+    }
+  };
+
   return (
     <div className={"taskeditor__wrapper taskeditor__wrapper-" + theme}>
       <div className={"taskeditor__container taskeditor__container-" + theme}>
@@ -107,6 +118,7 @@ const NewTask = ({ locale, theme }) => {
               rows={6}
               placeholder={locale.newtask.taskconditionplaceholder}
               defaultValue={defaultValue.task_condition}
+              onKeyDown={addNewLine}
             ></Form.Control>
             <Form.Label style={{ marginTop: "20px" }}>
               {locale.newtask.answer}
