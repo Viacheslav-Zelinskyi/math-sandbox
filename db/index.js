@@ -8,7 +8,15 @@ const DB_DATABASE = process.env.DB_DATABASE;
 
 const sequelize = new Sequelize(
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}`,
-  { freezeTableName: true }
+  {
+    freezeTableName: true,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  }
 );
 
 const Users = require("./users")(sequelize);
@@ -17,8 +25,8 @@ const TasksViews = require("./tasks_views")(sequelize);
 const TasksResponse = require("./tasks_response")(sequelize);
 const Comments = require("./comments")(sequelize);
 const CommentsLikes = require("./comments_likes")(sequelize);
-const UsersAnswers = require('./users_answers')(sequelize);
-const Themes = require('./themes')(sequelize);
+const UsersAnswers = require("./users_answers")(sequelize);
+const Themes = require("./themes")(sequelize);
 
 Comments.belongsTo(Users, { foreignKey: "user_id" });
 
@@ -31,5 +39,5 @@ module.exports = {
   comments: Comments,
   comments_likes: CommentsLikes,
   users_answers: UsersAnswers,
-  themes: Themes
+  themes: Themes,
 };
