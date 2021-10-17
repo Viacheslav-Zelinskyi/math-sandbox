@@ -32,13 +32,15 @@ router.route("/answer").post(TaskController.checkAnswer);
 
 router.route("/last").get(TaskController.getLastTasks);
 
-router.route("/tags").get(TaskController.getPopularTags)
+router.route("/tags").get(TaskController.getPopularTags);
 
 router.route("/completed").get(TaskController.countCompletedTask);
 
 router.route("/writed").get(TaskController.getWritedTask);
 
 router.route("/popular").get(TaskController.getPopularTask);
+
+router.route("/search").get(TaskController.searchTask);
 
 router
   .route("/comment")

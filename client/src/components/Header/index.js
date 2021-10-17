@@ -17,6 +17,14 @@ const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
   const history = useHistory();
+
+  const searchTasks = (e) => {
+    if (e.code === "Enter") {
+      history.push(`/tasks?search=${e.target.value}`);
+      e.target.value = "";
+    }
+  };
+
   return (
     <div className="header">
       <Navbar bg={theme} variant={theme} expand="md">
@@ -58,6 +66,7 @@ const Header = ({ setLanguage, setTheme, theme, locale, loggedIn }) => {
                 className="navbar__search"
                 size="sm"
                 placeholder={locale.navbar.searchPlaceholder}
+                onKeyDown={searchTasks}
               ></FormControl>
               <NavDropdown title={locale.navbar.language}>
                 <NavDropdown.Item onClick={() => setLanguage("en")}>

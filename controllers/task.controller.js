@@ -262,6 +262,20 @@ class TaskController {
     res.send(themes.map((item) => item.theme));
   }
 
+  async searchTask(req, res) {
+    const tasks = await TaskService.searchTask(
+      req.query.theme,
+      req.query.searchStr,
+      req.query.from,
+      req.query.interval
+    );
+    const count = await TaskService.countSearchTask(
+      req.query.theme,
+      req.query.searchStr
+    );
+    res.send({ taskNumber: count, tasks: tasks[0] });
+  }
+
   async updateTask(req, res) {
     let authData = {};
     switch (req.body.type) {

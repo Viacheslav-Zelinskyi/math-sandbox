@@ -1,6 +1,6 @@
 CREATE TABLE users (
   user_id SERIAL PRIMARY KEY NOT NULL,
-  user_name char(50) NOT NULL,
+  user_name TEXT NOT NULL,
   user_password TEXT,
   is_admin BOOLEAN,
   is_blocked BOOLEAN,
@@ -17,8 +17,8 @@ CREATE TABLE users_answers (
 CREATE TABLE tasks (
   task_id SERIAL PRIMARY KEY NOT NULL,
   user_id int NOT NULL,
-  task_name char(50) NOT NULL,
-  task_theme char(50) NOT NULL,
+  task_name TEXT NOT NULL,
+  task_theme TEXT NOT NULL,
   task_condition TEXT NOT NULL,
   task_tags TEXT NOT NULL,
   task_images TEXT,

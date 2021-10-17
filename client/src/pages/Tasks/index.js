@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-import { getAllTaskFetch, getThemesFetch } from "../../api";
+import { getAllTaskFetch, getThemesFetch, searchTaskFetch } from "../../api";
 import "./Tasks.scss";
 
 const Tasks = ({ theme, locale }) => {
@@ -10,32 +10,53 @@ const Tasks = ({ theme, locale }) => {
   const [themes, setThemes] = useState([]);
   const defaultSearchString = useQuery().get("search");
   const [searchString, setSearchString] = useState(defaultSearchString);
+  const [searchTheme, setSearchTheme] = useState();
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    getAllTaskFetch(0, 10).then((res) => setTasks(res));
     getThemesFetch().then((res) => setThemes(res));
+    if (defaultSearchString)
+      searchTaskFetch(searchString, searchTheme, page * 10, 10).then((res) =>
+        setTasks(res)
+      );
+    else getAllTaskFetch(0, 10).then((res) => setTasks(res));
   }, []);
 
   useEffect(() => {
     getAllTaskFetch(page * 10, 10).then((res) => setTasks(res));
   }, [page]);
 
+  useEffect(() => {
+    if (!searchString && !searchTheme) {
+      getAllTaskFetch(page * 10, 10).then((res) => setTasks(res));
+    } else {
+      searchTaskFetch(searchString, searchTheme, page * 10, 10).then((res) =>
+        setTasks(res)
+      );
+    }
+  }, [searchString, searchTheme, page]);
+
+  useEffect(() => {
+    setSearchString(defaultSearchString);
+  }, [defaultSearchString]);
+
   return (
     <div className={"tasks__wrapper tasks__wrapper-" + theme}>
       <div className={"tasks__container tasks__container-" + theme}>
         <div className="tasks__search">
           <div className="tasks__selecttheme">
-            <Form.Select>
-              <option>{locale.tasks.all}</option>
+            <Form.Select onChange={(e) => setSearchTheme(e.target.value)}>
+              <option value="">{locale.tasks.all}</option>
               {themes.map((item) => (
-                <option>{locale.themes[item]}</option>
+                <option value={item}>{locale.themes[item]}</option>
               ))}
             </Form.Select>
           </div>
           <Form.Control
             placeholder={locale.tasks.searchplaceholder}
+            value={searchString}
             defaultValue={searchString}
+            onChange={(e) => setSearchString(e.target.value)}
           ></Form.Control>
         </div>
         <TaskBlock

@@ -21,7 +21,7 @@ app.use(cors());
 
 app.use("/", express.static(path.join(__dirname, "client/build")));
 
-app.get(["/", "/mainpage", "/userpage", "/taskpage"], (req, res) => {
+app.get(["/", "/tasks", "/mypage", "/taskpage", "/task/:id", "/administration", "/user/:id", "/taskeditor"], (req, res) => {
   res.sendFile("index.html", { root: path.join(__dirname, "client/build") });
 });
 

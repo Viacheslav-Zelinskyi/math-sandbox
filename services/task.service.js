@@ -248,6 +248,70 @@ class TaskService {
     });
   }
 
+  searchTask(theme, searchStr, from = 0, interval = 10) {
+    return new Promise((res, rej) => {
+      db.sequelize
+        .query(
+          `SELECT tasks.task_id, tasks.user_id, task_name, task_theme, task_condition, task_tags 
+          FROM tasks WHERE 
+          ${
+            searchStr
+              ? `to_tsvector(task_condition) || to_tsvector(task_name) 
+          || to_tsvector(task_tags) || to_tsvector(task_theme) 
+          @@ plainto_tsquery('${searchStr}') `
+              : " "
+          }` +
+            (theme && searchStr ? " AND " : " ") +
+            (theme ? ` task_theme='${theme}' ` : "") +
+            `UNION SELECT tasks.task_id, tasks.user_id, task_name, 
+                  task_theme, task_condition, task_tags 
+            FROM comments, tasks 
+            WHERE tasks.task_id=comments.task_id 
+            AND to_tsvector(task_condition) 
+                || to_tsvector(task_name) 
+                    || to_tsvector(task_tags) 
+                    || to_tsvector(task_theme) 
+                    || to_tsvector(comment)
+                    @@ plainto_tsquery('${searchStr}')` +
+            (!!theme ? `AND task_theme='${theme}' ` : "") +
+            ` LIMIT ${interval} OFFSET ${from};`
+        )
+        .then((result) => res(result));
+    });
+  }
+
+  countSearchTask(theme = "", searchStr) {
+    return new Promise((res, rej) => {
+      db.sequelize
+        .query(
+          `SELECT count(*) FROM ` +
+            `(SELECT tasks.task_id
+            FROM tasks WHERE 
+            ${
+              searchStr
+                ? `to_tsvector(task_condition) || to_tsvector(task_name) 
+            || to_tsvector(task_tags) || to_tsvector(task_theme) 
+            @@ plainto_tsquery('${searchStr}') `
+                : " "
+            }` +
+            (theme && searchStr ? " AND " : " ") +
+            (theme ? ` task_theme='${theme}' ` : "") +
+            `UNION SELECT tasks.task_id
+            FROM comments, tasks 
+            WHERE tasks.task_id=comments.task_id 
+            AND to_tsvector(task_condition) 
+                || to_tsvector(task_name) 
+                    || to_tsvector(task_tags) 
+                    || to_tsvector(task_theme) 
+                    || to_tsvector(comment)
+                    @@ plainto_tsquery('${searchStr}')` +
+            (theme ? `AND task_theme='${theme}' ` : "") +
+            `) src`
+        )
+        .then((result) => res(+result[0][0].count));
+    });
+  }
+
   updateTask(taskData, task_id, user_id, is_admin) {
     return new Promise((res, rej) => {
       db.tasks
